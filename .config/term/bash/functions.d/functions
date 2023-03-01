@@ -1,0 +1,4 @@
+mkown() {
+  sudo chown "$(id -un)":"$(id -gn)" $@
+}
+
