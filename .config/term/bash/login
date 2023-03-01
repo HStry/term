@@ -1,1 +1,31 @@
+_script="$(readlink -f "$0")"
+_path="$(dirname "${_script}")"
+
+source_files=()
+source_dirs=( variables.d \
+              aliases.d \
+              functions.d )
+
+for f in "${source_files[@]}"; do
+  [[ "${f:0:1}" != "/" ]] && f="${_path}/${f}"
+  if [[ -f "${f}" ]]; then
+    . "${f}"
+  else
+    echo "File '${f}' in source_files does not exist." >&2
+  fi
+done
+
+for d in "${source_dirs[@]}"; do
+  [[ "${d:0:1}" != "/" ]] && d="${_path}/${d}"
+  if [[ -d "${d}" ]]; then
+    for f in "${d}"/*; do
+      [[ -f "${f}" ]] && . "${f}"
+    done
+  else
+    echo "Directory '${d}' in source_dirs does not exist." >&2
+  fi
+done
+
+
+
 
