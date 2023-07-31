@@ -1,1 +1,2 @@
 .config/stry-term/bash/* linguist-language=bash
+.config/stry-term/bash/modules.d/* linguist-language=bash
