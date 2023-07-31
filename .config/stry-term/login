@@ -1,0 +1,3 @@
+[ -n "$FISH_VERSION" ] && source ./fish/login
+[ -n "$ZSH_VERSION" ]  && . ./zsh/login
+[ -n "$BASH_VERSION" ] && . ./bash/login
