@@ -1,0 +1,23 @@
+repeat() {
+  local i n="${1:-20}" c="${2:- }"
+  for ((i=0; i<n; i++)); do echo -n "${c}"; done
+}
+
+rstrip() {
+}
+
+lstrip() {
+}
+
+strip() {
+}
+
+ljust() {
+}
+
+rjust() {
+}
+
+cjust() {
+}
+
