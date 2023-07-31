@@ -1,0 +1,23 @@
+inarr() {
+  local i
+  for (( i=2; i<=$#; i++ )); do
+    [[ "${!i}" == "$1" ]] && return 0
+  done
+  return 1
+}
+
+ixarr() {
+  local i
+  for (( i=2; i<=$#; i++ )); do
+    [[ "${!i}" == "$1" ]] && echo "$(( i - 2 ))" && return 0
+  done
+  return 1
+}
+
+ixsarr() {
+  local i m=0
+  for (( i=2; i<=$#; i++ )); do
+    [[ "${!i}" == "$1" ]] && echo "$(( i - 2 ))" && m=1
+  done
+  (( m )) && return 0 || return 1
+}
