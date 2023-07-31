@@ -4,20 +4,34 @@ repeat() {
 }
 
 rstrip() {
+  echo "${1}" | sed -e 's/\s*$//'
 }
 
 lstrip() {
+  echo "${1}" | sed -e 's/^\s*//'
 }
 
 strip() {
+  echo "${1}" | sed -e 's/^\s*//' -e 's/\s*$//'
 }
 
 ljust() {
+  local n=$(( ${1} - ${#2} ))
+  local p="$(repeat ${n} "${3:- }")"
+  echo "${2}${p}"
 }
 
 rjust() {
+  local n=$(( ${1} - ${#2} ))
+  local p="$(repeat ${n} "${3:- }")"
+  echo "${p}${2}"
 }
 
 cjust() {
+  local nl=$(( (${1} - ${#2}) / 2 ))
+  local nr=$(( ${1} - ${#2} - ${i} ))
+  local pl="$(repeat ${nl} "${3:- }")"
+  local pr="$(repeat ${nr} "${3:- }")"
+  echo "${pl}${2}${pr}"
 }
 
