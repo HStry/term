@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # stry-term (bash) login script
 
 stry-term() {
