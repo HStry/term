@@ -1,0 +1,27 @@
+# Cross-terminal init script
+
+sh -c "
+etc=\"\${XDG_CONFIG_HOME:-\${HOME}/.config}\"
+term=\"$0\"
+if [ -n \"\${term}\" ]; then
+  term=\"\${term#*-}\"
+else
+  # term is probably fish.
+  term=\"fish\"
+fi
+if ! [ -d \"\${etc}/term\" ]; then
+  echo \"Required config path '\${etc}/term' missing.\" >&2
+  exit 255
+fi
+if ! [ -d \"\${etc}/term/\${term}\" ]; then
+  echo \"Config directory '\${etc}/term/\${term}' for terminal '\${term}' missing.\" >&2
+  exit 127
+fi
+if ! [ -f \"\${etc}/term/\${term}/init\" ]; then
+  echo \"Init file '\${etc}/term/\${term}/init' missing.\" >&2
+  exit 63
+fi
+ln -fsT \"\${etc}/term/\${term}/init\" \"\${HOME}/.term-init\"
+" && \
+source $HOME/.term-init
+rm -f $HOME/.term-init
