@@ -1,0 +1,11 @@
+export _termpath="${XDG_CONFIG_HOME:-${HOME}/.config}/term/bash"
+if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
+  echo "This file is intended to be sourced, not run." >&2
+  exit 255
+fi
+
+[[ -f "${_termpath}/profile" ]] && . "${_termpath}/profile"
+if [[ "$0" == "-"* ]]; then
+  # This is a login-terminal.
+  [[ -f "${_termpath}/login" ]] && . "${_termpath}/login"
+fi
