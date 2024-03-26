@@ -1,4 +1,4 @@
-# Cross-terminal exit script
+# Cross-terminal goodbye script
 
 sh -c "
 etc=\"\${XDG_CONFIG_HOME:-\${HOME}/.config}\"
@@ -17,11 +17,15 @@ if ! [ -d \"\${etc}/term/\${term}\" ]; then
   echo \"Config directory '\${etc}/term/\${term}' for terminal '\${term}' missing.\" >&2
   exit 127
 fi
-if ! [ -f \"\${etc}/term/\${term}/exit\" ]; then
-  echo \"Exit file '\${etc}/term/\${term}/exit' missing.\" >&2
+if ! [ -f \"\${etc}/term/\${term}/goodbye\" ]; then
+  echo \"Goodbye file '\${etc}/term/\${term}/goodbye' missing.\" >&2
   exit 63
 fi
-ln -fsT \"\${etc}/term/\${term}/exit\" \"\${HOME}/.term-exit\"
+if [ -e \"\${HOME}/.goodbye\" ]; then
+  echo \"Goodbye jump file '\${HOME}/.goodbye' already exists.\" >&2
+  exit 31
+fi
+ln -fsT \"\${etc}/term/\${term}/goodbye\" \"\${HOME}/.goodbye\"
 " && \
-source $HOME/.term-exit
-rm -f $HOME/.term-exit
+source $HOME/.goodbye
+rm -f $HOME/.goodbye
