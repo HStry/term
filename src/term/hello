@@ -1,4 +1,4 @@
-# Cross-terminal init script
+# Cross-terminal hello script
 
 sh -c "
 etc=\"\${XDG_CONFIG_HOME:-\${HOME}/.config}\"
@@ -17,11 +17,15 @@ if ! [ -d \"\${etc}/term/\${term}\" ]; then
   echo \"Config directory '\${etc}/term/\${term}' for terminal '\${term}' missing.\" >&2
   exit 127
 fi
-if ! [ -f \"\${etc}/term/\${term}/init\" ]; then
-  echo \"Init file '\${etc}/term/\${term}/init' missing.\" >&2
+if ! [ -f \"\${etc}/term/\${term}/hello\" ]; then
+  echo \"hello file '\${etc}/term/\${term}/hello' missing.\" >&2
   exit 63
 fi
-ln -fsT \"\${etc}/term/\${term}/init\" \"\${HOME}/.term-init\"
+if [ -e \"\${HOME}/.hello\" ]; then
+  echo \"hello jump file '\${HOME}/.hello' already exists.\" >&2
+  exit 31
+fi
+ln -fsT \"\${etc}/term/\${term}/hello\" \"\${HOME}/.hello\"
 " && \
-source $HOME/.term-init
-rm -f $HOME/.term-init
+source $HOME/.hello
+rm -f $HOME/.hello
