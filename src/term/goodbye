@@ -1,4 +1,7 @@
-# Cross-terminal goodbye script
+# Cross-terminal goodbye script.
+# Thanks fish. This could've been so fucking easy if you just
+# had $$, I could've just used 'ps -q $$ -o comm=' instead of
+# all this bullshit to determine the shell.
 
 sh -c "
 etc=\"\${XDG_CONFIG_HOME:-\${HOME}/.config}\"
