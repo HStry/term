@@ -6,25 +6,25 @@ fi
 self="$(realpath -s "${BASH_SOURCE[0]}")"
 here="$(dirname "${self}")"
 
-validate_int() {
+math._validate_int() {
   [[ "${1}" =~ ^(0|-?[1-9][0-9]*)$ ]] && echo -en ${1} && return 0
   echo "Value '${1}' isn't an integer." >&2
   return 1
 }
 
 math.min() {
-  local v vmin=$(validate_int "${1}") || return 1; shift
+  local v vmin=$(math._validate_int "${1}") || return 1; shift
   for v in "$@"; do
-    v=$(validate_int "${v}") || return 1
+    v=$(math._validate_int "${v}") || return 1
     (( v < vmin )) && vmin=${v}
   done
   echo -en ${vmin}
 }
 
 math.max() {
-  local v vmax=$(validate_int "${1}") || return 1; shift
+  local v vmax=$(math._validate_int "${1}") || return 1; shift
   for v in "$@"; do
-    v=$(validate_int "${v}") || return 1
+    v=$(math._validate_int "${v}") || return 1
     (( v > vmax )) && vmax=${v}
   done
   echo -en ${vmax}
@@ -33,7 +33,7 @@ math.max() {
 math.sum() {
   local v vsum=0
   for v in "$@"; do
-    v=$(validate_int "${v}") || return 1
+    v=$(math._validate_int "${v}") || return 1
     (( vsum+=v ))
   done
   echo -en ${vsum}
@@ -43,4 +43,4 @@ math.avg() {
   echo -en $(( $(math.sum "$@") / $# ))
 }
 
-export -f math.{min,max,sum,avg}
+export -f math.{min,max,sum,avg,_validate_int}
