@@ -2,6 +2,7 @@
 # Thanks fish. This could've been so fucking easy if you just
 # had $$, I could've just used 'ps -q $$ -o comm=' instead of
 # all this bullshit to determine the shell.
+# ref: https://github.com/fish-shell/fish-shell/issues/1202
 
 sh -c "
 etc=\"\${XDG_CONFIG_HOME:-\${HOME}/.config}\"
