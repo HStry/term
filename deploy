@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+IFS=$'\n'
+
+msg_help="$(cat << EOF
+deploy term
+USAGE:
+  deploy [OPTIONS]
+
+OPTIONS:
+  -?, -h, --help    
+  -i, --install     Install term in your profile.
+  -s, --skel        Install term in /etc/skel.
+  -A, --all-users   DO NOT USE THIS. Install term for all users.
+  
+EOF
+")
+
+arg_help=0
+arg_skel=0
+arg_install=0
+arg_force=0
+arg_all_users=0
+
+parse_args=1
+active_arg=""
+for arg in "$@"; do
+  ((   parse_args )) && [[ "${arg}" == '--' ]] && parse_args=0 && continue
+  (( ! parse_args )) && [[ "${arg}" == '++' ]] && parse_args=1 && continue
+  if (( parse_args )) && [[ "${arg:0:2}" == '--' ]]; then
+    [[ "${arg:2}" == 'help' ]]      && arg_help=1      && continue
+    [[ "${arg:2}" == 'skel' ]]      && arg_skel=1      && continue
+    [[ "${arg:2}" == 'install' ]]   && arg_install=1   && continue
+    [[ "${arg:2}" == 'all-users' ]] && arg_all_users=1 && continue
+    echo "" >&2
+    printhelp
+  elif (( parse_args )) && [[ "${arg:0:1}" == '-' ]]; then
+    for (( i=1, i<${#arg}, i++ )); do
+      [[ "${arg:i:1}" == 'h' ]] && arg_help=1      && continue
+      [[ "${arg:i:1}" == '?' ]] && arg_help=1      && continue
+      [[ "${arg:i:1}" == 's' ]] && arg_skel=1      && continue
+      [[ "${arg:i:1}" == 'i' ]] && arg_install=1   && continue
+      [[ "${arg:i:1}" == 'A' ]] && arg_all_users=1 && continue
+    done
+  fi
+done
+
