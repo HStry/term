@@ -8,7 +8,7 @@ sys.findcmd() {
   local name
   for name in "$@"; do
     find "${paths[@]}" -maxdepth 1 -executable -iname "${name}"
-  done
+  done | sort -u
 }
 
 # With regards to sys.findcmd; wanted to do a single run, but couldn't
