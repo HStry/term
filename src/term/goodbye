@@ -1,35 +1,33 @@
-# Cross-terminal goodbye script.
-# Thanks fish. This could've been so fucking easy if you just
-# had $$, I could've just used 'ps -q $$ -o comm=' instead of
-# all this bullshit to determine the shell.
-# ref: https://github.com/fish-shell/fish-shell/issues/1202
+sh -c '
+unset ftmp etc_term
+cleanup() { [ -f "${ftmp}" ] && rm -f "${ftmp}"; }
+trap cleanup EXIT
 
-sh -c "
-etc=\"\${XDG_CONFIG_HOME:-\${HOME}/.config}\"
-term=\"$0\"
-if [ -n \"\${term}\" ]; then
-  term=\"\${term#*-}\"
+if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/term/goodbye" ]; then
+  etc_term="${XDG_CONFIG_HOME:-${HOME}/.config}/term"
+elif [ -f "${HOME}/.term/goodbye" ]; then
+  etc_term="${HOME}/.term"
 else
-  # term is probably fish.
-  term=\"fish\"
+  echo "Could not locate term root." >&2
+  exit 1
 fi
-if ! [ -d \"\${etc}/term\" ]; then
-  echo \"Required config path '\${etc}/term' missing.\" >&2
-  exit 255
+
+ftmp="$(mktemp)"
+cat < /proc/self/status > "${ftmp}"
+pid="$(grep '"'"'^Pid:'"'"' ${ftmp} | awk '"'"'{print $2}'"'"')"
+ppid="$(grep '"'"'^PPid:'"'"' ${ftmp} | awk '"'"'{print $2}'"'"')"
+shell="$(grep '"'"'^Name:'"'"' "/proc/${ppid}/status"\
+       | awk '"'"'{print $2}'"'"' | sed -e '"'"'s/^-*//'"'"')"
+if ! [ -d "${etc_term}/${shell}" ]; then
+  echo "Missing configuration path '"'"'${etc_term}/${shell}'"'"'."
+  exit 1
+elif ! [ -f "${etc_term}/${shell}/goodbye" ]; then
+  echo "Missing entry file '"'"'${etc_term}/${shell}/goodbye'"'"'."
+  exit 1
 fi
-if ! [ -d \"\${etc}/term/\${term}\" ]; then
-  echo \"Config directory '\${etc}/term/\${term}' for terminal '\${term}' missing.\" >&2
-  exit 127
-fi
-if ! [ -f \"\${etc}/term/\${term}/goodbye\" ]; then
-  echo \"Goodbye file '\${etc}/term/\${term}/goodbye' missing.\" >&2
-  exit 63
-fi
-if [ -e \"\${HOME}/.goodbye\" ]; then
-  echo \"Goodbye jump file '\${HOME}/.goodbye' already exists.\" >&2
-  exit 31
-fi
-ln -fsT \"\${etc}/term/\${term}/goodbye\" \"\${HOME}/.goodbye\"
-" && \
-source $HOME/.goodbye
-rm -f $HOME/.goodbye
+tty="$(tty | sed -e '"'"'s/\//_/g'"'"' -e '"'"'s/^_*//'"'"')"
+ln -s "${etc_term}/${shell}/goodbye" "${HOME}/.goodbye_${tty}"' \
+&& . "$HOME/.goodbye_$(tty | sed -e 's/\//_/g' -e 's/^_*//')"
+
+[ -f "$HOME/.goodbye_$(tty | sed -e 's/\//_/g' -e 's/^_*//')" ] \
+&& rm -f "$HOME/.goodbye_$(tty | sed -e 's/\//_/g' -e 's/^_*//')"
