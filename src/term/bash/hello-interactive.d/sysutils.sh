@@ -167,4 +167,15 @@ sys.findcmd() {
 #   unset names[0]
 #   find "${paths[@]}" -maxdepth 1 -executable "${names[@]}"
 
+users_can_sudo() {
+  for u in "$@"; do
+    [ $(id -u "${u}" 2> /dev/null || echo 1) -eq 0 ] \
+    || getent group sudo wheel \
+       | sed -e 's/^\([^:]*:\)\{3\}//' \
+       | grep -q '\(^\|,\)'"${u}"'\(,\|$\)' \
+    || return 1
+  done
+  return 0
+}
+
 export -f to_bool color colorize hosts_reachable hosts_reachable_wait qdig sys.findcmd
