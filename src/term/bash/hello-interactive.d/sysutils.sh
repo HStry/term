@@ -31,36 +31,48 @@ color() {
 colorize() {
   local cc C c s
   case "$1" in
-    (*'R'*) C=41;;
-    (*'G'*) C=42;;
-    (*'B'*) C=44;;
-    (*'C'*) C=46;;
-    (*'M'*) C=45;;
-    (*'Y'*) C=43;;
-    (*'K'*) C=40;;
-    (*'W'*) C=47;;
+    (*'R'*) cc="${cc};41";;
+    (*'G'*) cc="${cc};42";;
+    (*'B'*) cc="${cc};44";;
+    (*'C'*) cc="${cc};46";;
+    (*'M'*) cc="${cc};45";;
+    (*'Y'*) cc="${cc};43";;
+    (*'K'*) cc="${cc};40";;
+    (*'W'*) cc="${cc};47";;
   esac
   case "$1" in
-    (*'r'*) c=31;;
-    (*'g'*) c=32;;
-    (*'b'*) c=34;;
-    (*'c'*) c=36;;
-    (*'m'*) c=35;;
-    (*'y'*) c=33;;
-    (*'k'*) c=30;;
-    (*'w'*) c=37;;
+    (*'r'*) cc="${cc};31";;
+    (*'g'*) cc="${cc};32";;
+    (*'b'*) cc="${cc};34";;
+    (*'c'*) cc="${cc};36";;
+    (*'m'*) cc="${cc};35";;
+    (*'y'*) cc="${cc};33";;
+    (*'k'*) cc="${cc};30";;
+    (*'w'*) cc="${cc};37";;
   esac
   case "$1" in
-    (*'*'*) s=1;;
-    (*'.'*) s=2;;
-    (*'/'*) s=3;;
-    (*'_'*) s=4;;
-    (*'-'*) s=9;;
-    (*'|'*) s=51;;
-    (*'^'*) s=53;;
+    (*'*'*) cc="${cc};1";;
+  esac
+  case "$1" in
+    (*'.'*) cc="${cc};2";;
+  esac
+  case "$1" in
+    (*'/'*) cc="${cc};3";;
+  esac
+  case "$1" in
+    (*'_'*) cc="${cc};4";;
+  esac
+  case "$1" in
+    (*'-'*) cc="${cc};9";;
+  esac
+  case "$1" in
+    (*'|'*) cc="${cc};51";;
+  esac
+  case "$1" in
+    (*'^'*) cc="${cc};53";;
   esac
   shift
-  cc="$(echo "$C;$c;$s" | sed -e 's/;\+/;/g' -e 's/^;//' -e 's/;$//')"
+  cc="$(echo "${cc}" | sed -e 's/;\+/;/g' -e 's/^;//' -e 's/;$//')"
   echo '\e['"${cc}"'m'"$@"'\e[0m'
 }
 
@@ -88,23 +100,30 @@ hosts_reachable() {
 hosts_reachable_wait() {
   local t ts="${SLEEP:-5}" tw="${WAIT:-1}" timeout="${TIMEOUT:-600}"
   local rc=0 e=0
-  local u d w
+  local u d w wi wu wl
   if color; then
     u='[  '"$(colorize 'g*' UP)"'  ]'
     d='[ '"$(colorize 'r*' DOWN)"' ]'
-    w='[ '"$(colorize 'y*' WAIT)"' ]'
+    wu='[ '"$(colorize 'y*' WAIT)"' ]'
+    wl='[ '"$(colorize 'y/' wait)"' ]'
   else
     u='[  UP  ]'
     d='[ DOWN ]'
-    w='[ WAIT ]'
+    wu='[ WAIT ]'
+    wl='[ wait ]'
   fi
   
   for host in "$@"; do
-    t=0; e=0
+    t=0; e=0; wi=0
     while ! ping -q -w ${tw} -c 1 "${host}" > /dev/null 2>&1; do
       if [ "${t}" -gt "${timeout}" ]; then
         e=1; break
       else
+        if [ ${wi} -eq 0 ]; then
+          wi=1; w="${wu}"
+        else
+          wi=0; w="${wl}"
+        fi
         echo -en "${w} ${host}\r"
         t=$(expr ${t} + ${ts} + ${tw})
         sleep "${ts}"
