@@ -1,11 +1,20 @@
-export _termpath="${XDG_CONFIG_HOME:-${HOME}/.config}/term/bash"
-if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
+#!/usr/bin/env bash
+_self="$(realpath "${BASH_SOURCE[0]}")"
+_path="$(dirname "${_self}")"
+_file="$(basename "${_self}")"
+_name="${_file%.*}"
+
+if [ "$0" = "${BASH_SOURCE[0]}" ]; then
   echo "This file is intended to be sourced, not run." >&2
   exit 255
 fi
 
-[[ -f "${_termpath}/profile" ]] && . "${_termpath}/profile"
-if [[ "$0" == "-"* ]]; then
-  # This is a login-terminal.
-  [[ -f "${_termpath}/login" ]] && . "${_termpath}/login"
+for f in "${_path}/${_name}.d/"*.sh; do
+  [ -f "${f}" ] && . "${f}"
+done
+
+if tty > /dev/null 2>&1; then
+  for f in "${_path}/${_name}-interactive.d/"*.sh; do
+    [ -f "${f}" ] && . "${f}"
+  done
 fi
