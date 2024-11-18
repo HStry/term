@@ -1,0 +1,2 @@
+#!/usr/bin/env fish
+echo "This is $XDG_CONFIG_HOME/term/fish/hello"
