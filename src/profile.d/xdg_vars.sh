@@ -36,15 +36,15 @@ if [ ! -d "${XDG_BINARY_HOME}" ]; then
   done
 fi
 
-[ -n "${XDG_CONFIG_HOME}" && -d "${XDG_CONFIG_HOME}" ] \
+[ -n "${XDG_CONFIG_HOME}" -a -d "${XDG_CONFIG_HOME}" ] \
 && export XDG_CONFIG_HOME || unset XDG_CONFIG_HOME
-[ -n "${XDG_DATA_HOME}" && -d "${XDG_DATA_HOME}" ] \
+[ -n "${XDG_DATA_HOME}" -a -d "${XDG_DATA_HOME}" ] \
 && export XDG_DATA_HOME || unset XDG_DATA_HOME
-[ -n "${XDG_STATE_HOME}" && -d "${XDG_STATE_HOME}" ] \
+[ -n "${XDG_STATE_HOME}" -a -d "${XDG_STATE_HOME}" ] \
 && export XDG_STATE_HOME || unset XDG_STATE_HOME
-[ -n "${XDG_CACHE_HOME}" && -d "${XDG_CACHE_HOME}" ] \
+[ -n "${XDG_CACHE_HOME}" -a -d "${XDG_CACHE_HOME}" ] \
 && export XDG_CACHE_HOME || unset XDG_CACHE_HOME
-[ -n "${XDG_LIBRARY_HOME}" && -d "${XDG_LIBRARY_HOME}" ] \
+[ -n "${XDG_LIBRARY_HOME}" -a -d "${XDG_LIBRARY_HOME}" ] \
 && export XDG_LIBRARY_HOME || unset XDG_LIBRARY_HOME
-[ -n "${XDG_BINARY_HOME}" && -d "${XDG_BINARY_HOME}" ] \
+[ -n "${XDG_BINARY_HOME}" -a -d "${XDG_BINARY_HOME}" ] \
 && export XDG_BINARY_HOME || unset XDG_BINARY_HOME
