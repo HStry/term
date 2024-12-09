@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+
+last_id=''
+last_nonroot=''
+
+process_traverse() {
+  local status pid="${1:-$$}" uid pname
+  while status="$(cat "/proc/${pid}/status" 2> /dev/null)"; do
+    uid="$(echo "${status}" \
+           | grep '^Uid:' \
+           | sed -e 's/^[^:]\+:\s*\([0-9]\+\).*$/\1/')"
+    pname="$(echo "${status}" \
+             | grep '^Name:' \
+             | sed -e 's/^[^:]\+:\s*//')"
+    echo "${pid}:${uid}:${pname}"
+    pid="$(echo "${status}" \
+           | grep '^PPid:' \
+           | sed -e 's/^[^:]\+:\s*//')"
+  done
+}
+
+process-traverse \
+| while read line; do
+  last_id=`echo "${line}" | awk -F\: '{print $2}'`
+  [ "${last_id}" -ne 0 ] && last_nonroot="${last_id}"
+done
+
+if [ -n "${last_nonroot}" ]; then
+  echo "${last_nonroot} $(id -un "${last_nonroot}")"
+else
+  echo "0 root"
+fi
