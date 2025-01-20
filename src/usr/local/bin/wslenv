@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+
+if ! type cmd.exe > /dev/null 2>&1; then
+  echo "It appears 'cmd.exe' cannot be found." >&2
+  exit 1
+fi
+
+bs="$(openssl rand -hex 12)"
+eq="$(openssl rand -hex 12)"
+keys=( $(cmd.exe /C set 2> /dev/null \
+         | sed -e 's/\\\\/'"${bs}"'/g' \
+               -e 's/\\=/'"${eq}"'/g' \
+               -e 's/=.*$//' \
+               -e 's/'"${eq}"'/\\=/g' \
+               -e 's/'"${bs}"'/\\\\/g') )
+
+for env in "$@"; do
+  e="$(echo "${env}" \
+       | sed -e 's/^%\(.*\)%$/\1/' \
+       | tr '[:upper:]' '[:lower:]')"
+  for key in "${keys[@]}"; do
+    k="$(echo "${key}" \
+         | tr '[:upper:]' '[:lower:]')"
+    [ "${e}" = "${k}" ] || continue
+    cmd.exe /C echo '%'"${key}"'%' 2> /dev/null
+    break
+  done
+  echo
+done
